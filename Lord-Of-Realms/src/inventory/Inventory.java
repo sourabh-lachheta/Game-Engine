@@ -30,20 +30,7 @@ public class Inventory {
         items.add(new InventoryItem(item,1));
     }
 
-   /*
-   public List<Item> getItems(){
-        return items;
-    }
-    */
 
-   /*
-    public void showItems(){
-        for(Item item : items){
-            System.out.println(.addItem(item));
-            System.out.println(player.getInventory().getItemsText());
-        }
-    }
-    */
 
     public String getItemsText(){
         if(items.isEmpty()){
@@ -92,6 +79,11 @@ public class Inventory {
          }
      }
      return false;
+    }
+
+
+    public List<InventoryItem> getItems(){
+        return new ArrayList<>(items);
     }
 
 }

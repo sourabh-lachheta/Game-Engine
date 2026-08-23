@@ -86,10 +86,11 @@ public class Player {
                 break;
 
         }
-        return attack + realmBonus;
+        return getAttack() + realmBonus;
     }
 
     public void takeDamage(int amount){
+        amount = amount - getDefense();
 
         hp -= amount;
         if(hp < 0){
@@ -171,6 +172,10 @@ public class Player {
 
     public int getDefense(){
         return defense;
+    }
+
+    public int getHealth(){
+        return hp;
     }
 
 

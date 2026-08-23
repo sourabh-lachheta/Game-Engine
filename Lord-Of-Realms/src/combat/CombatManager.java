@@ -86,29 +86,43 @@ public class CombatManager {
     }
 
 
-    public boolean playerUseItem(Item item){
+    public String playerUseItem(Item item){
 
         if(isCombatOver()){
-            return false;
+            return null;
         }
+
+        int oldHp = player.getHealth();
 
         boolean used = player.useItem(item);
 
         if(!used){
-            return false;
+            return null;
         }
 
-        enemyAttack();
+        int healed = player.getHealth() - oldHp;
 
-        return true;
+        String result =
+                player.getName() + " used " + item.getName() + ".\n"+
+                "HP restored: " + healed + "\n\n" +
+                player.getName() + " HP " +
+                player.getHealthText();
+
+        result += "\n\n" + enemyAttack();
+        return result;
+
+
     }
+
+
 
     public void initializeActions(){
 
         actions.clear();
 
         actions.add(new CombatAction("Attack"));
-        actions.add(new CombatAction("use Item"));
+        actions.add(new CombatAction("Use Item"));
+        actions.add(new CombatAction("Use Skill"));
         actions.add(new CombatAction("Run"));
 
     }

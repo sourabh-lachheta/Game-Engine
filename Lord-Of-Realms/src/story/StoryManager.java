@@ -140,7 +140,7 @@ public class StoryManager {
                 " you have now weapon"
 
         );
-        scene6.addChoice(new Choice("swing the sword",8));
+        scene6.addChoice(new Choice("take herb",7,ItemDatabase.HEALING_HERB,null));
         scene6.addChoice(new Choice("Go Forward",7));
         addScene(scene6);
 
