@@ -1,7 +1,11 @@
 package player;
 
+import combat.Skill;
 import inventory.Inventory;
 import inventory.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private String name;
@@ -14,6 +18,7 @@ public class Player {
     private int realm;
     private int attack;
     private int defense;
+    private List<Skill> learnedSkills;
 
     private Inventory inventory;
 
@@ -34,6 +39,7 @@ public class Player {
         defense = 5;
 
         inventory = new Inventory();
+        learnedSkills = new ArrayList<>();
 
     }
 
@@ -176,6 +182,42 @@ public class Player {
 
     public int getHealth(){
         return hp;
+    }
+
+    public boolean learnSkillFromScroll(Item scroll){
+        if(!inventory.hasItem(scroll)){
+            return false;
+        }
+
+        Skill skill = scroll.getSkill();
+
+        if(skill == null){
+            return false;
+        }
+
+        if(hasSkill(skill)){
+            return false;
+        }
+
+        learnSkill(skill);
+
+        inventory.removeItem(scroll);
+
+        return true;
+    }
+
+    public void learnSkill(Skill skill){
+        if(!learnedSkills.contains(skill)){
+            learnedSkills.add(skill);
+        }
+    }
+
+    public boolean hasSkill(Skill skill){
+        return learnedSkills.contains(skill);
+    }
+
+    public List<Skill> getLearnedSkills(){
+        return learnedSkills;
     }
 
 

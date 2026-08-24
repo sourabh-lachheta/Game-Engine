@@ -1,5 +1,7 @@
 package inventory;
 
+import combat.Skill;
+
 public class Item {
 
     private String name;
@@ -8,6 +10,7 @@ public class Item {
     private boolean consumable;
     private ItemType type;
     private int attackDamage;
+    private Skill skill;
 
     public Item(String name, boolean stackable){
         // this.name = name;
@@ -32,6 +35,19 @@ public class Item {
         this.consumable = consumable;
         this.type = type;
         this.attackDamage = attackDamage;
+    }
+
+    public Item(String name, Boolean stackable, Skill skill){
+        this.name = name;
+        this.stackable = stackable;
+        this.healAmount = 0;
+        this.consumable = true;
+        this.type = ItemType.SKILL;
+        this.skill = skill;
+    }
+
+    public Skill getSkill(){
+        return skill;
     }
 
     public int getAttackDamage(){

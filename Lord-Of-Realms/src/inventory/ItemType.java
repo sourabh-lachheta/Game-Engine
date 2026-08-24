@@ -4,5 +4,6 @@ public enum ItemType {
 
     WEAPON,
     CONSUMABLE,
-    KEY
+    KEY,
+    SKILL
 }

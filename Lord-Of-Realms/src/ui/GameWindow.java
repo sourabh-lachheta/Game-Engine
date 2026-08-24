@@ -14,10 +14,7 @@
 
 
 package ui;
-import combat.CombatAction;
-import combat.CombatManager;
-import combat.CombatProfile;
-import combat.Enemy;
+import combat.*;
 import inventory.*;
 import player.Player;
 import story.Choice;
@@ -65,6 +62,7 @@ public class GameWindow extends JFrame {
     private JButton choice4Button;
     private JButton combatBackButton;
     private JButton combatContinueButton;
+    private JButton skillsButton;
 
 
 
@@ -79,6 +77,11 @@ public class GameWindow extends JFrame {
     private List<Item> combatItems;
     private List<Item> combatWeapons;
     private boolean combatResult;
+    private boolean selectingSkillScroll;
+    private List<Item> skillScrolls = new ArrayList<>();
+
+
+
 
 
     public GameWindow(Player player, StoryManager storyManager){
@@ -115,6 +118,8 @@ public class GameWindow extends JFrame {
 
         combatContinueButton.addActionListener(e -> handleCombatContinue());
 
+        skillsButton.addActionListener(e -> showSkillScrolls());
+
     }
 
 
@@ -123,8 +128,58 @@ public class GameWindow extends JFrame {
 
         if (inCombat) {
             handleCombatAction(buttonIndex);
-        } else {
+
+        } else if(selectingSkillScroll){
+
+            handleSkillScroll(buttonIndex);
+        }
+        else {
             handleChoice(buttonIndex);
+        }
+    }
+
+    private void handleSkillScroll(int buttonIndex){
+
+        if(buttonIndex == skillScrolls.size()){
+
+            selectingSkillScroll = false;
+
+            updateScene();
+
+            return;
+        }
+
+        if(buttonIndex >= skillScrolls.size()){
+            return;
+        }
+
+        Item scroll = skillScrolls.get(buttonIndex);
+
+        Skill skill = scroll.getSkill();
+
+        if(skill == null){
+            return;
+        }
+
+
+        boolean learned = player.learnSkillFromScroll(scroll);
+
+        if(learned){
+
+            setStoryText(
+                    "you learned " + skill.getName()
+            );
+
+            updatePlayerInfo();
+        }
+        else{
+            setStoryText(
+                    "You cannot learn " + skill.getName() + "."
+            );
+
+            selectingSkillScroll = false;;
+
+            updateScene();
         }
     }
 
@@ -168,20 +223,6 @@ public class GameWindow extends JFrame {
             showCombatWeapons();
             return;
 
-           /* String result = combatManager.playerAttack();
-
-            setStoryText(result);
-
-            updatePlayerInfo();
-
-            if (combatManager.isCombatOver()) {
-                inCombat = false;
-                int nextSceneId = combatChoice.getNextSceneId();
-                storyManager.completeCombat(nextSceneId);
-
-                updateScene();
-                updatePlayerInfo();
-            }*/
         }
 
         else if(actionIndex == 1){
@@ -192,27 +233,7 @@ public class GameWindow extends JFrame {
 
             return;
 
-          /*  String result = combatManager.playerUseItem(item);
 
-            if(result != null){
-
-                setStoryText(result);
-
-                updatePlayerInfo();
-                updateInventory();
-
-                if(combatManager.isCombatOver()){
-
-                    inCombat = false;
-
-                    int nextSceneId = combatChoice.getNextSceneId();
-
-                    storyManager.completeCombat(nextSceneId);
-
-                    updateScene();
-                    updatePlayerInfo();
-                }
-            }*/
         }
 
         if(actionIndex == 2){
@@ -500,6 +521,56 @@ public class GameWindow extends JFrame {
     }
 
 
+    private void showSkillScrolls(){
+
+        selectingSkillScroll = true;
+
+        skillScrolls.clear();
+
+        for(InventoryItem inventoryItem : player.getInventory().getItems()){
+
+            Item item = inventoryItem.getItem();
+
+            if(item.getType() == ItemType.SKILL){
+                skillScrolls.add(item);
+            }
+        }
+
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button
+        };
+
+        int buttonIndex = 0;
+
+        for(Item scroll : skillScrolls){
+
+            if(buttonIndex >= buttons.length -1){
+                break;
+            }
+
+            buttons[buttonIndex].setText(scroll.getName());
+            buttons[buttonIndex].setVisible(true);
+
+            buttonIndex++;
+        }
+
+        buttons[buttonIndex].setText("Back");
+        buttons[buttonIndex].setVisible(true);
+
+        buttonIndex++;
+
+        // Hide remaining buttons
+        while (buttonIndex < buttons.length) {
+
+            buttons[buttonIndex].setVisible(false);
+            buttonIndex++;
+        }
+    }
+
+
     // layouts,fonts,colors,borders, sizes etc.......
     private void layoutComponents() {
         mainPanel.setLayout(new BorderLayout());
@@ -557,6 +628,7 @@ public class GameWindow extends JFrame {
         choicePanel.add(choice4Button);
         choicePanel.add(combatBackButton);
         choicePanel.add(combatContinueButton);
+        choicePanel.add(skillsButton);
 
 
 
@@ -610,10 +682,12 @@ public class GameWindow extends JFrame {
         combatBackButton.setVisible(false);
         combatContinueButton = new JButton("Continue");
         combatContinueButton.setVisible(false);
+        skillsButton = new JButton("Skills");
 
 
         combatItems = new ArrayList<>();
         combatWeapons = new ArrayList<>();
+
 
 
 
