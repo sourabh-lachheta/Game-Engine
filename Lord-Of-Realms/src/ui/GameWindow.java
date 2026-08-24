@@ -64,6 +64,7 @@ public class GameWindow extends JFrame {
     private JButton choice3Button;
     private JButton choice4Button;
     private JButton combatBackButton;
+    private JButton combatContinueButton;
 
 
 
@@ -77,6 +78,7 @@ public class GameWindow extends JFrame {
     private boolean selectingCombatAttack;
     private List<Item> combatItems;
     private List<Item> combatWeapons;
+    private boolean combatResult;
 
 
     public GameWindow(Player player, StoryManager storyManager){
@@ -111,6 +113,8 @@ public class GameWindow extends JFrame {
 
         combatBackButton.addActionListener(e -> showMainCombatActions());
 
+        combatContinueButton.addActionListener(e -> handleCombatContinue());
+
     }
 
 
@@ -122,6 +126,24 @@ public class GameWindow extends JFrame {
         } else {
             handleChoice(buttonIndex);
         }
+    }
+
+    private void handleCombatContinue(){
+
+        combatContinueButton.setVisible(false);
+        combatResult = false;
+
+        if(combatManager.getEnemy().isAlive()){
+
+            storyManager.startStory(1);
+        } else{
+
+            int nextSceneId = combatChoice.getNextSceneId();
+            storyManager.completeCombat(nextSceneId);
+        }
+
+        updateScene();
+        updatePlayerInfo();
     }
 
 
@@ -204,7 +226,46 @@ public class GameWindow extends JFrame {
 
             return;
         }
+
+
     }
+
+
+
+    private void showCombatResult(){
+        inCombat = false;
+
+        choice1Button.setVisible(false);
+        choice2Button.setVisible(false);
+        choice3Button.setVisible(false);
+        choice4Button.setVisible(false);
+
+        combatBackButton.setVisible(false);
+
+        if (combatManager.getEnemy().isAlive()) {
+
+            setStoryText(
+                    combatManager.getEnemy().getName()
+                            + " defeated you."
+            );
+
+        } else {
+
+            setStoryText(
+                    "You defeated "
+                            + combatManager.getEnemy().getName()
+                            + "!\n\n"
+                            + "Exp gained: "
+                            + combatManager.getEnemy().getExpReward()
+            );
+        }
+
+        combatContinueButton.setVisible(true);
+
+        updatePlayerInfo();
+    }
+
+
 
 
     public void showCombatItems(){
@@ -267,6 +328,15 @@ public class GameWindow extends JFrame {
 
         int buttonIndex = 0;
 
+        buttons[buttonIndex].setText("Fist");
+        buttons[buttonIndex].setVisible(true);
+
+        combatWeapons.add(null);
+
+        buttonIndex++;
+
+
+        // adding weapon from item:
         for (InventoryItem inventoryItem : items) {
 
             Item item = inventoryItem.getItem();
@@ -302,28 +372,19 @@ public class GameWindow extends JFrame {
 
         Item weapon  = combatWeapons.get(weaponIndex);
 
-        String result = combatManager.playerAttack();
+        String result;
+        if(weapon == null){
+            result = combatManager.playerAttack();
+        }else{
+            result = combatManager.playerAttack(weapon);
+        }
 
-        setStoryText(
-                player.getName() + " attacks with " +
-                        weapon.getName() + ".\n\n" +
-                        result
-        );
+        setStoryText(result);
 
         updatePlayerInfo();
 
         if(combatManager.isCombatOver()){
-
-            inCombat = false;
-            selectingCombatAttack = false;
-            combatBackButton.setVisible(false);
-
-            int nextSceneId = combatChoice.getNextSceneId();
-
-            storyManager.completeCombat(nextSceneId);
-
-            updateScene();
-            updatePlayerInfo();
+            showCombatResult();
 
             return;
         }
@@ -495,6 +556,7 @@ public class GameWindow extends JFrame {
         choicePanel.add(choice3Button);
         choicePanel.add(choice4Button);
         choicePanel.add(combatBackButton);
+        choicePanel.add(combatContinueButton);
 
 
 
@@ -546,6 +608,8 @@ public class GameWindow extends JFrame {
         choice4Button = new JButton();
         combatBackButton = new JButton("Back");
         combatBackButton.setVisible(false);
+        combatContinueButton = new JButton("Continue");
+        combatContinueButton.setVisible(false);
 
 
         combatItems = new ArrayList<>();

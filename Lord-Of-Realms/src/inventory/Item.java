@@ -7,12 +7,13 @@ public class Item {
     private int healAmount;
     private boolean consumable;
     private ItemType type;
+    private int attackDamage;
 
     public Item(String name, boolean stackable){
-       // this.name = name;
+        // this.name = name;
         //this.stackable = stackable;
 
-        this(name, stackable, 0,false,ItemType.KEY); //temporarily put ItemType.KEY
+        this(name, stackable, 0,false,ItemType.KEY,0); //temporarily put ItemType.KEY
     }
 
     public Item(String name, boolean stackable, int healAmount, boolean consumable, ItemType type){
@@ -21,6 +22,20 @@ public class Item {
         this.healAmount = healAmount;
         this.consumable = consumable;
         this.type = type;
+    }
+
+    public Item(String name, boolean stackable, int healAmount, boolean consumable, ItemType type, int attackDamage) {
+
+        this.name = name;
+        this.stackable = stackable;
+        this.healAmount = healAmount;
+        this.consumable = consumable;
+        this.type = type;
+        this.attackDamage = attackDamage;
+    }
+
+    public int getAttackDamage(){
+        return attackDamage;
     }
 
     public ItemType getType(){

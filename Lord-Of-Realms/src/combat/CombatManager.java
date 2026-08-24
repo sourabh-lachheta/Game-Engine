@@ -58,6 +58,31 @@ public class CombatManager {
         return result;
     }
 
+    public String playerAttack(Item weapon){
+
+        int damage = player.getCombatAttack() + weapon.getAttackDamage();
+
+        enemy.takeDamage(damage);
+
+        String result =
+                player.getName() + " attacks " + enemy.getName() + "\n" +
+                        "Damage: " + damage + "\n\n" +
+                        enemy.getName() + " HP: " +
+                        enemy.getHp() + "/" + enemy.getMaxHp();
+
+        if(!enemy.isAlive()){
+            player.gainExp(enemy.getExpReward());
+
+            result += "\n\n" +
+                    enemy.getName() + " has been defeated!\n" +
+                    "Exp gained: " + enemy.getExpReward();
+
+            return result;
+        }
+        result += "\n\n" + enemyAttack();
+        return result;
+    }
+
 
     private String enemyAttack(){
 
