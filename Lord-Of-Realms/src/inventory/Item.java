@@ -37,7 +37,7 @@ public class Item {
         this.attackDamage = attackDamage;
     }
 
-    public Item(String name, Boolean stackable, Skill skill){
+    public Item(String name, Boolean stackable, Skill skill,ItemType type){
         this.name = name;
         this.stackable = stackable;
         this.healAmount = 0;

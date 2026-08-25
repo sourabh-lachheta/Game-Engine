@@ -140,6 +140,45 @@ public class CombatManager {
     }
 
 
+    public String playerUseSkill(Skill skill){
+
+
+        if(isCombatOver()){
+            return null;
+        }
+
+        int damage = skill.getDamage();
+
+        enemy.takeDamage(damage);
+
+        String result =
+                player.getName() + " used" +
+                skill.getName() + " on " +
+                enemy.getName() + "\n" +
+                "Damage: " + damage + "\n\n" +
+                enemy.getName() + " HP: " +
+                enemy.getHp() + "/" +
+                enemy.getMaxHp();
+
+        if(!enemy.isAlive()){
+
+            player.gainExp(enemy.getExpReward());
+
+            result += "\n\n" +
+                    enemy.getName() +
+                    " has been defeated!\n" +
+                    "Exp gained: " +
+                    enemy.getExpReward();
+
+            return  result;
+        }
+
+        result += "\n\n" + enemyAttack();
+
+        return result;
+    }
+
+
 
     public void initializeActions(){
 

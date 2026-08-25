@@ -137,7 +137,7 @@ public class StoryManager {
 
         StoryScene scene6 = new StoryScene(
                 6,
-                " you have now weapon"
+                " take the herb"
 
         );
         scene6.addChoice(new Choice("take herb",7,ItemDatabase.HEALING_HERB,null));
@@ -147,12 +147,12 @@ public class StoryManager {
 
         StoryScene scene7 = new StoryScene(
                 7,
-                "you see herb"
+                "you see scroll"
         );
 
         scene7.addChoice(new Choice("Take the herb", 9, ItemDatabase.HEALING_HERB,null));
         scene7.addChoice(new Choice("Go Forward", 10 ));
-        scene7.addChoice(new Choice("Fight the Wolf", 10, wolf));
+        scene7.addChoice(new Choice("take the scroll ", 10, ItemDatabase.FIRE_SCROLL,null));
         addScene(scene7);
 
         StoryScene scene9 = new StoryScene(
@@ -167,10 +167,10 @@ public class StoryManager {
 
         StoryScene scene10 = new StoryScene(
                 10,
-                "you defated wolf found another healing item"
+                "you found wolf"
         );
 
-        scene10.addChoice(new Choice("Take the herb", 12,ItemDatabase.HEALING_HERB,null));
+        scene10.addChoice(new Choice("fight wolf", 12,wolf));
         scene10.addChoice(new Choice("Go Forward",13));
         addScene(scene10);
 

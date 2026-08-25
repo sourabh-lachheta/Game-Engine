@@ -79,6 +79,8 @@ public class GameWindow extends JFrame {
     private boolean combatResult;
     private boolean selectingSkillScroll;
     private List<Item> skillScrolls = new ArrayList<>();
+    private List<Skill> combatSkills = new ArrayList<>();
+    private boolean selectingCombatSkill;
 
 
 
@@ -104,38 +106,293 @@ public class GameWindow extends JFrame {
     }
 
 
-    private void registerListeners() {
+     private void registerListeners() {
 
-        choice1Button.addActionListener( e-> handleButtonClick(0));
+          choice1Button.addActionListener( e-> handleButtonClick(0));
 
-        choice2Button.addActionListener(e -> handleButtonClick(1));
+          choice2Button.addActionListener(e -> handleButtonClick(1));
 
-        choice3Button.addActionListener( e-> handleButtonClick(2));
+          choice3Button.addActionListener( e-> handleButtonClick(2));
 
-        choice4Button.addActionListener( e-> handleButtonClick(3));
+          choice4Button.addActionListener( e-> handleButtonClick(3));
 
-        combatBackButton.addActionListener(e -> showMainCombatActions());
+          combatBackButton.addActionListener(e -> showMainCombatActions());
 
-        combatContinueButton.addActionListener(e -> handleCombatContinue());
+          combatContinueButton.addActionListener(e -> handleCombatContinue());
 
-        skillsButton.addActionListener(e -> showSkillScrolls());
+          skillsButton.addActionListener(e -> showSkillScrolls());
+
+      }
+
+
+      // it gives player in combat or story
+      private void handleButtonClick(int buttonIndex) {
+
+        if(inCombat){
+
+            if(selectingCombatSkill){
+                handleCombatSkill(buttonIndex);
+            } else {
+                handleCombatAction(buttonIndex);
+            }
+        } else if(selectingSkillScroll){
+
+            handleSkillScroll(buttonIndex);
+        }else{
+
+           handleChoice(buttonIndex);
+      }
+    }
+
+
+    // layouts,fonts,colors,borders, sizes etc.......
+    private void layoutComponents() {
+        mainPanel.setLayout(new BorderLayout());
+        //  mainPanel.add(statusPanel, BorderLayout.NORTH);
+
+
+        topPanel.setLayout(new BorderLayout());
+        topPanel.add(statusPanel, BorderLayout.WEST);
+        topPanel.add(inventoryPanel,BorderLayout.CENTER);
+
+        mainPanel.add(topPanel,BorderLayout.NORTH);
+        mainPanel.add(storyPanel, BorderLayout.CENTER);
+        mainPanel.add(choicePanel, BorderLayout.SOUTH);
+        add(mainPanel);
+
+
+
+
+        statusPanel.setBackground(Color.RED);
+        storyPanel.setBackground(Color.BLUE);
+        choicePanel.setBackground(Color.GREEN);
+
+        // status panel...
+
+        inventoryPanel.setLayout(new BorderLayout());
+        inventoryPanel.add(inventoryScrollPane, BorderLayout.CENTER);
+
+        statusPanel.setLayout(
+                new BoxLayout(statusPanel,BoxLayout.Y_AXIS)
+        );
+        nameLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(nameLabel);
+        realmLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(realmLabel);
+        hpLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(hpLabel);
+        qiLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(qiLabel);
+        expLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(expLabel);
+        defenseLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(defenseLabel);
+
+        // inventoryLabel.setFont(new Font("font",Font.PLAIN,16));
+        // statusPanel.add(inventoryLabel);
+
+        // story panel...
+        storyPanel.setLayout(new BorderLayout());
+        storyPanel.add(storyScrollPane,BorderLayout.CENTER);
+
+        // choice panel....
+        choicePanel.add(choice1Button);
+        choicePanel.add(choice2Button);
+        choicePanel.add(choice3Button);
+        choicePanel.add(choice4Button);
+        choicePanel.add(combatBackButton);
+        choicePanel.add(combatContinueButton);
+        choicePanel.add(skillsButton);
+
+
 
     }
 
 
-    // it gives player in combat or story
-    private void handleButtonClick(int buttonIndex) {
+    // all my panel, buttons, labels, text area etc......
+    private void createComponents() {
+        mainPanel = new JPanel();
 
-        if (inCombat) {
-            handleCombatAction(buttonIndex);
 
-        } else if(selectingSkillScroll){
+        //status panel...
+        statusPanel = new JPanel();
+        nameLabel = new JLabel();
+        realmLabel = new JLabel();
+        hpLabel = new JLabel();
+        qiLabel = new JLabel();
+        expLabel = new JLabel();
+        defenseLabel = new JLabel();
 
-            handleSkillScroll(buttonIndex);
+        // inventoryLabel = new JLabel("Inventory : Empty");
+
+        topPanel = new JPanel();
+        inventoryPanel = new JPanel();
+
+        inventoryTextArea = new JTextArea();
+        inventoryTextArea.setEditable(false);
+        inventoryTextArea.setLineWrap(true);
+        inventoryTextArea.setWrapStyleWord(true);
+
+        inventoryScrollPane = new JScrollPane(inventoryTextArea);
+
+        //story panel....
+        storyPanel = new JPanel();
+        storyTextArea = new JTextArea();
+        storyTextArea.setFont(new Font("GC Omega", Font.BOLD,20));
+
+
+        storyScrollPane = new JScrollPane(storyTextArea);
+        storyTextArea.setEditable(false);
+        storyTextArea.setLineWrap(true);
+        storyTextArea.setWrapStyleWord(true);
+
+        //choice panel...
+        choicePanel = new JPanel();
+        choice1Button = new JButton();
+        choice2Button = new JButton();
+        choice3Button = new JButton();
+        choice4Button = new JButton();
+        combatBackButton = new JButton("Back");
+        combatBackButton.setVisible(false);
+        combatContinueButton = new JButton("Continue");
+        combatContinueButton.setVisible(false);
+        skillsButton = new JButton("Skills");
+
+
+        combatItems = new ArrayList<>();
+        combatWeapons = new ArrayList<>();
+
+
+
+
+
+    }
+
+
+    private void configureWindow() {
+        setTitle(GAME_TITTLE);
+        setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+
+    public void setStoryText(String text){
+
+        storyTextArea.setText(text);
+    }
+
+    public void setChoices(List<Choice> choices){
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button
+
+        };
+
+        for(int i = 0; i < buttons.length; i++){
+            if(i < choices.size()){
+                buttons[i].setText(choices.get(i).getText());
+                buttons[i].setVisible(true);
+            }else{
+                buttons[i].setVisible(false);
+            }
         }
-        else {
-            handleChoice(buttonIndex);
+    }
+
+    private void setCombatActions(List<CombatAction> actions) {
+
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button
+        };
+
+        for (int i = 0; i < buttons.length; i++) {
+
+            if (i < actions.size()) {
+                buttons[i].setText(actions.get(i).getName());
+                buttons[i].setVisible(true);
+            } else {
+                buttons[i].setVisible(false);
+            }
         }
+    }
+
+
+    public void showCombatSKills(){
+
+        combatSkills.clear();
+
+        combatSkills.addAll(player.getLearnedSkills());
+
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button
+        };
+
+        int buttonIndex = 0;
+
+        for(Skill skill : combatSkills){
+
+            if(buttonIndex >= buttons.length){
+                break;
+            }
+
+            buttons[buttonIndex].setText(skill.getName());
+            buttons[buttonIndex].setVisible(true);
+
+            buttonIndex++;
+        }
+
+
+
+        while(buttonIndex < buttons.length){
+
+            buttons[buttonIndex].setVisible(false);
+            buttonIndex++;
+        }
+
+        selectingCombatSkill = true;
+       combatBackButton.setVisible(true);
+    }
+
+
+
+    private void updateScene() {
+
+        StoryScene scene = storyManager.getCurrentScene();
+
+
+
+        setStoryText(scene.getStoryText());
+        setChoices(scene.getChoices());
+
+    }
+
+    public void updateHealth(int hp){
+        hpLabel.setText("HP : " + hp + "/100");
+    }
+
+    private void updatePlayerInfo(){
+        nameLabel.setText(("Name : " + player.getName()));
+        realmLabel.setText("Realm : "+ player.getRealmName());
+        hpLabel.setText("HP : "+ player.getHealthText());
+        qiLabel.setText("Qi : " + player.getQiText());
+        expLabel.setText("EXp : " + player.getExp());
+        defenseLabel.setText("Defense : " + player.getDefense());
+    }
+
+    private void updateInventory(){
+
+        inventoryTextArea.setText(
+                "Inventory: \n" +
+                        player.getInventory().getItemsText()
+        );
     }
 
     private void handleSkillScroll(int buttonIndex){
@@ -143,6 +400,8 @@ public class GameWindow extends JFrame {
         if(buttonIndex == skillScrolls.size()){
 
             selectingSkillScroll = false;
+
+            skillsButton.setVisible(true);
 
             updateScene();
 
@@ -170,7 +429,10 @@ public class GameWindow extends JFrame {
                     "you learned " + skill.getName()
             );
 
+            updateInventory();
             updatePlayerInfo();
+            showSkillScrolls();
+
         }
         else{
             setStoryText(
@@ -196,6 +458,8 @@ public class GameWindow extends JFrame {
             int nextSceneId = combatChoice.getNextSceneId();
             storyManager.completeCombat(nextSceneId);
         }
+
+        skillsButton.setVisible(true);
 
         updateScene();
         updatePlayerInfo();
@@ -237,7 +501,13 @@ public class GameWindow extends JFrame {
         }
 
         if(actionIndex == 2){
-            setStoryText("skill are not implement yet");
+
+            selectingCombatSkill = true;
+
+            showCombatSKills();
+
+            combatBackButton.setVisible(true);
+
             return;
         }
 
@@ -249,6 +519,35 @@ public class GameWindow extends JFrame {
         }
 
 
+    }
+
+
+    private void handleCombatSkill(int skillIndex){
+
+        if(skillIndex >= combatSkills.size()){
+            return;
+        }
+
+        Skill skill = combatSkills.get(skillIndex);
+
+        String result = combatManager.playerUseSkill(skill);
+
+        setStoryText(result);
+
+        updatePlayerInfo();
+
+        if(combatManager.isCombatOver()){
+
+            selectingCombatSkill = false;
+
+            showCombatResult();
+
+            return;
+        }
+
+        selectingCombatSkill = false;
+
+        setCombatActions(combatManager.getActions());
     }
 
 
@@ -308,7 +607,7 @@ public class GameWindow extends JFrame {
 
             Item item = inventoryItem.getItem();
 
-            if(item.isConsumable()){
+            if(item.isConsumable() && item.getType() != ItemType.SKILL){
 
                 if(buttonIndex >= buttons.length){
                     break;
@@ -376,6 +675,8 @@ public class GameWindow extends JFrame {
                 buttonIndex++;
             }
         }
+
+
 
         while (buttonIndex < buttons.length) {
             buttons[buttonIndex].setVisible(false);
@@ -463,6 +764,7 @@ public class GameWindow extends JFrame {
 
         selectingCombatItem = false;
         selectingCombatAttack =  false;
+        selectingCombatSkill = false;
 
         combatBackButton.setVisible(false);
 
@@ -495,6 +797,11 @@ public class GameWindow extends JFrame {
 
         inCombat = true;
 
+        selectingSkillScroll = false;
+        selectingCombatSkill = false;
+
+        skillsButton.setVisible(false);
+
         combatChoice = choice;
 
         combatManager = new CombatManager(player,choice.getEnemy());
@@ -524,6 +831,8 @@ public class GameWindow extends JFrame {
     private void showSkillScrolls(){
 
         selectingSkillScroll = true;
+
+        skillsButton.setVisible(false);
 
         skillScrolls.clear();
 
@@ -557,8 +866,8 @@ public class GameWindow extends JFrame {
             buttonIndex++;
         }
 
-        buttons[buttonIndex].setText("Back");
-        buttons[buttonIndex].setVisible(true);
+       buttons[buttonIndex].setText("Back");
+       buttons[buttonIndex].setVisible(true);
 
         buttonIndex++;
 
@@ -571,215 +880,6 @@ public class GameWindow extends JFrame {
     }
 
 
-    // layouts,fonts,colors,borders, sizes etc.......
-    private void layoutComponents() {
-        mainPanel.setLayout(new BorderLayout());
-      //  mainPanel.add(statusPanel, BorderLayout.NORTH);
-
-
-        topPanel.setLayout(new BorderLayout());
-        topPanel.add(statusPanel, BorderLayout.WEST);
-        topPanel.add(inventoryPanel,BorderLayout.CENTER);
-
-        mainPanel.add(topPanel,BorderLayout.NORTH);
-        mainPanel.add(storyPanel, BorderLayout.CENTER);
-        mainPanel.add(choicePanel, BorderLayout.SOUTH);
-        add(mainPanel);
-
-
-
-
-        statusPanel.setBackground(Color.RED);
-        storyPanel.setBackground(Color.BLUE);
-        choicePanel.setBackground(Color.GREEN);
-
-        // status panel...
-
-        inventoryPanel.setLayout(new BorderLayout());
-        inventoryPanel.add(inventoryScrollPane, BorderLayout.CENTER);
-
-        statusPanel.setLayout(
-                new BoxLayout(statusPanel,BoxLayout.Y_AXIS)
-        );
-        nameLabel.setFont(new Font("font",Font.PLAIN,16));
-        statusPanel.add(nameLabel);
-        realmLabel.setFont(new Font("font",Font.PLAIN,16));
-        statusPanel.add(realmLabel);
-        hpLabel.setFont(new Font("font",Font.PLAIN,16));
-        statusPanel.add(hpLabel);
-        qiLabel.setFont(new Font("font",Font.PLAIN,16));
-        statusPanel.add(qiLabel);
-        expLabel.setFont(new Font("font",Font.PLAIN,16));
-        statusPanel.add(expLabel);
-        defenseLabel.setFont(new Font("font",Font.PLAIN,16));
-        statusPanel.add(defenseLabel);
-
-       // inventoryLabel.setFont(new Font("font",Font.PLAIN,16));
-       // statusPanel.add(inventoryLabel);
-
-        // story panel...
-        storyPanel.setLayout(new BorderLayout());
-        storyPanel.add(storyScrollPane,BorderLayout.CENTER);
-
-        // choice panel....
-        choicePanel.add(choice1Button);
-        choicePanel.add(choice2Button);
-        choicePanel.add(choice3Button);
-        choicePanel.add(choice4Button);
-        choicePanel.add(combatBackButton);
-        choicePanel.add(combatContinueButton);
-        choicePanel.add(skillsButton);
-
-
-
-    }
-
-
-    // all my panel, buttons, labels, text area etc......
-    private void createComponents() {
-        mainPanel = new JPanel();
-
-
-        //status panel...
-        statusPanel = new JPanel();
-        nameLabel = new JLabel();
-        realmLabel = new JLabel();
-        hpLabel = new JLabel();
-        qiLabel = new JLabel();
-        expLabel = new JLabel();
-        defenseLabel = new JLabel();
-
-       // inventoryLabel = new JLabel("Inventory : Empty");
-
-        topPanel = new JPanel();
-        inventoryPanel = new JPanel();
-
-        inventoryTextArea = new JTextArea();
-        inventoryTextArea.setEditable(false);
-        inventoryTextArea.setLineWrap(true);
-        inventoryTextArea.setWrapStyleWord(true);
-
-        inventoryScrollPane = new JScrollPane(inventoryTextArea);
-
-        //story panel....
-        storyPanel = new JPanel();
-        storyTextArea = new JTextArea();
-        storyTextArea.setFont(new Font("GC Omega", Font.BOLD,20));
-
-
-        storyScrollPane = new JScrollPane(storyTextArea);
-        storyTextArea.setEditable(false);
-        storyTextArea.setLineWrap(true);
-        storyTextArea.setWrapStyleWord(true);
-
-        //choice panel...
-        choicePanel = new JPanel();
-        choice1Button = new JButton();
-        choice2Button = new JButton();
-        choice3Button = new JButton();
-        choice4Button = new JButton();
-        combatBackButton = new JButton("Back");
-        combatBackButton.setVisible(false);
-        combatContinueButton = new JButton("Continue");
-        combatContinueButton.setVisible(false);
-        skillsButton = new JButton("Skills");
-
-
-        combatItems = new ArrayList<>();
-        combatWeapons = new ArrayList<>();
-
-
-
-
-
-    }
-
-
-    private void configureWindow() {
-        setTitle(GAME_TITTLE);
-        setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
-
-
-    public void setStoryText(String text){
-       
-        storyTextArea.setText(text);
-    }
-
-    public void setChoices(List<Choice> choices){
-        JButton[] buttons = {
-                choice1Button,
-                choice2Button,
-                choice3Button,
-                choice4Button
-
-        };
-
-        for(int i = 0; i < buttons.length; i++){
-            if(i < choices.size()){
-                buttons[i].setText(choices.get(i).getText());
-                buttons[i].setVisible(true);
-            }else{
-                buttons[i].setVisible(false);
-            }
-        }
-    }
-
-    private void setCombatActions(List<CombatAction> actions) {
-
-        JButton[] buttons = {
-                choice1Button,
-                choice2Button,
-                choice3Button,
-                choice4Button
-        };
-
-        for (int i = 0; i < buttons.length; i++) {
-
-            if (i < actions.size()) {
-                buttons[i].setText(actions.get(i).getName());
-                buttons[i].setVisible(true);
-            } else {
-                buttons[i].setVisible(false);
-            }
-        }
-    }
-
-
-
-    private void updateScene() {
-
-        StoryScene scene = storyManager.getCurrentScene();
-
-
-
-        setStoryText(scene.getStoryText());
-        setChoices(scene.getChoices());
-
-    }
-
-    public void updateHealth(int hp){
-        hpLabel.setText("HP : " + hp + "/100");
-    }
-
-    private void updatePlayerInfo(){
-        nameLabel.setText(("Name : " + player.getName()));
-        realmLabel.setText("Realm : "+ player.getRealmName());
-        hpLabel.setText("HP : "+ player.getHealthText());
-        qiLabel.setText("Qi : " + player.getQiText());
-        expLabel.setText("EXp : " + player.getExp());
-        defenseLabel.setText("Defense : " + player.getDefense());
-    }
-
-    private void updateInventory(){
-
-        inventoryTextArea.setText(
-                "Inventory: \n" +
-                player.getInventory().getItemsText()
-        );
-    }
 
 
     public void showWindow(){
