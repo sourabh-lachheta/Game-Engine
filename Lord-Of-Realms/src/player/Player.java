@@ -117,8 +117,8 @@ public class Player {
     }
 
 
-    public void consumeQi(){
-
+    public void consumeQi(int amount){
+        qi -= amount;
     }
 
 
@@ -219,6 +219,12 @@ public class Player {
     public List<Skill> getLearnedSkills(){
         return learnedSkills;
     }
+
+    public int getQi(){
+        return qi;
+    }
+
+
 
 
 

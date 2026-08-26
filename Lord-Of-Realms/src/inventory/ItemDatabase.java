@@ -11,7 +11,7 @@ public class ItemDatabase {
             new Item("Rusty Sword",false,0,false,ItemType.WEAPON,10);
 
     public static final Skill FIRE_BALL =
-            new Skill("Fire Ball", 30);
+            new Skill("Fire Ball", 30,30);
 
     public static final Item FIRE_SCROLL =
             new Item("Ancient Fire Scroll", false,FIRE_BALL,ItemType.SKILL);

@@ -147,6 +147,19 @@ public class CombatManager {
             return null;
         }
 
+        int qiCost = skill.getQiCost();
+
+
+        if(player.getQi() < qiCost){
+
+            return player.getName() +
+                    " does not have enough Qi\n" +
+                    "Required " + qiCost + "\n" +
+                    "Current Qi; " + player.getQi();
+        }
+
+        player.consumeQi(qiCost);
+
         int damage = skill.getDamage();
 
         enemy.takeDamage(damage);
