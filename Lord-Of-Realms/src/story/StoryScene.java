@@ -8,6 +8,7 @@
 
 package story;
 
+import npc.NPC;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +18,14 @@ public class StoryScene {
     private int id;
     private String storyText;
     private List<Choice> choices;
+    private List<NPC> npcs;
 
 
     public  StoryScene(int id ,String storyText){
         this.id = id;
         this.storyText = storyText;
         this.choices = new ArrayList<>();
+        this.npcs = new ArrayList<>();
     }
 
     public void addChoice(Choice choice){
@@ -39,6 +42,14 @@ public class StoryScene {
 
     public List<Choice> getChoices(){
         return choices;
+    }
+
+    public void addNPC(NPC npc){
+        npcs.add(npc);
+    }
+
+    public List<NPC> getNPCs(){
+        return npcs;
     }
 
 }

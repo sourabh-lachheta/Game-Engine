@@ -6,10 +6,10 @@ public class CombatProfile {
     private int attack;
     private int expReward;
 
-    public CombatProfile(int maxHp, int attack, int expReward){
+    public CombatProfile(int maxHp, int attack){
         this.maxHp = maxHp;
         this.attack = attack;
-        this.expReward = expReward;
+
     }
 
     public int getAttack(){
@@ -20,7 +20,5 @@ public class CombatProfile {
         return maxHp;
     }
 
-    public int getExpReward(){
-        return expReward;
-    }
+
 }

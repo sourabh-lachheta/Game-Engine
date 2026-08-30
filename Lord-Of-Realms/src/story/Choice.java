@@ -11,6 +11,7 @@ package story;
 
 import combat.Enemy;
 import inventory.Item;
+import npc.NPC;
 
 public class Choice {
     private String text;
@@ -20,6 +21,7 @@ public class Choice {
     private Item reward;
     private Item requiredItem;
     private Enemy enemy;
+    private NPC npc;
 
     private ChoiceType type;
 
@@ -51,6 +53,22 @@ public class Choice {
         this.enemy = enemy;
         this.type = ChoiceType.COMBAT;
     }
+
+    public Choice(String text, int nextSceneId, NPC npc){
+        this.text = text;
+        this.nextSceneId = nextSceneId;
+        this.npc = npc;
+        this.type = ChoiceType.NPC;
+    }
+
+
+
+    public NPC getNpc(){
+        return npc;
+    }
+
+
+
     public int getNextSceneId(){
         return nextSceneId;
 

@@ -16,6 +16,8 @@
 package ui;
 import combat.*;
 import inventory.*;
+import npc.NPC;
+import npc.NPCProfile;
 import player.Player;
 import story.Choice;
 import story.ChoiceType;
@@ -81,6 +83,11 @@ public class GameWindow extends JFrame {
     private List<Item> skillScrolls = new ArrayList<>();
     private List<Skill> combatSkills = new ArrayList<>();
     private boolean selectingCombatSkill;
+    private boolean viewingNPCProfile = false;
+
+    private boolean inNPC = false;
+    private NPC currentNPC;
+    private Choice npcChoice;
 
 
 
@@ -116,7 +123,18 @@ public class GameWindow extends JFrame {
 
           choice4Button.addActionListener( e-> handleButtonClick(3));
 
-          combatBackButton.addActionListener(e -> showMainCombatActions());
+          combatBackButton.addActionListener(e -> {
+              if(inCombat){
+                  showMainCombatActions();
+              }
+              else if(viewingNPCProfile){
+                  viewingNPCProfile = false;
+                  showNPCMenu();
+              }
+              else if(inNPC){
+                  leaveNPC();
+              }
+          });
 
           combatContinueButton.addActionListener(e -> handleCombatContinue());
 
@@ -138,7 +156,12 @@ public class GameWindow extends JFrame {
         } else if(selectingSkillScroll){
 
             handleSkillScroll(buttonIndex);
-        }else{
+        }
+
+        else if(inNPC){
+            handleNPCAction(buttonIndex);
+
+        } else{
 
            handleChoice(buttonIndex);
       }
@@ -257,6 +280,7 @@ public class GameWindow extends JFrame {
         combatContinueButton = new JButton("Continue");
         combatContinueButton.setVisible(false);
         skillsButton = new JButton("Skills");
+        skillsButton.setVisible(true);
 
 
         combatItems = new ArrayList<>();
@@ -309,6 +333,8 @@ public class GameWindow extends JFrame {
                 choice3Button,
                 choice4Button
         };
+
+        skillsButton.setVisible(false);
 
         for (int i = 0; i < buttons.length; i++) {
 
@@ -781,6 +807,9 @@ public class GameWindow extends JFrame {
         if(choice.getType() == ChoiceType.COMBAT){
             enterCombat(choice);
             return;
+        } else if(choice.getType() == ChoiceType.NPC){
+            enterNPC(choice);
+            return;
         }
 
        boolean success =  storyManager.selectChoice(choiceIndex);
@@ -804,7 +833,9 @@ public class GameWindow extends JFrame {
 
         combatChoice = choice;
 
-        combatManager = new CombatManager(player,choice.getEnemy());
+        Enemy enemy = new Enemy(choice.getNpc());
+
+        combatManager = new CombatManager(player,enemy);
 
         combatManager.startCombat();
 
@@ -833,6 +864,8 @@ public class GameWindow extends JFrame {
         selectingSkillScroll = true;
 
         skillsButton.setVisible(false);
+
+        combatBackButton.setVisible(false);
 
         skillScrolls.clear();
 
@@ -877,6 +910,141 @@ public class GameWindow extends JFrame {
             buttons[buttonIndex].setVisible(false);
             buttonIndex++;
         }
+    }
+
+
+    private void enterNPC(Choice choice){
+
+        inNPC = true;
+
+        npcChoice = choice;
+
+        currentNPC = choice.getNpc();
+        showNPCMenu();
+    }
+
+    private void showNPCMenu(){
+
+        NPC npc = currentNPC;
+
+        setStoryText(npc.getProfile().getName() + "\n\nwhat do you want to do?");
+
+        choice1Button.setText("Talk");
+        choice1Button.setVisible(true);
+
+        choice2Button.setText("Profile");
+        choice2Button.setVisible(true);
+
+        choice3Button.setText("Trade");
+        choice4Button.setVisible(true);
+
+
+        if(npc.canFight()){
+            choice4Button.setText("Fight");
+            choice4Button.setVisible(true);
+        }else{
+            choice4Button.setVisible(false);
+        }
+
+        combatBackButton.setVisible(true);
+    }
+
+
+
+    private void handleNPCAction(int actionIndex) {
+
+        if (actionIndex == 0) {
+
+            // Talk
+            handleNPCTalk();
+
+        } else if (actionIndex == 1) {
+
+            // Profile
+            showNPCProfile();
+
+        } /*else if (actionIndex == 2) {
+
+            // Trade
+            handleNPCTrade();
+
+        }*/ else if (actionIndex == 3) {
+
+            // Fight
+            if (currentNPC.canFight()) {
+                enterNPCCombat();
+            }
+        }
+    }
+
+    private void leaveNPC() {
+
+        inNPC = false;
+        currentNPC = null;
+
+        combatBackButton.setVisible(false);
+
+        storyManager.startStory(npcChoice.getNextSceneId());
+
+        npcChoice = null;
+
+        updateScene();
+        updatePlayerInfo();
+
+    }
+
+
+    private void handleNPCTalk(){
+
+        int talkSceneId = currentNPC.getProfile().getTalkSceneId();
+
+        inNPC = false;
+
+        combatBackButton.setVisible(false);
+
+        storyManager.startStory(talkSceneId);
+
+        updateScene();
+        updatePlayerInfo();
+    }
+
+    private void enterNPCCombat(){
+
+        inNPC = false;
+        inCombat = true;
+
+        combatChoice = npcChoice;
+
+        Enemy enemy = new Enemy(currentNPC);
+
+        combatManager = new CombatManager(player, enemy);
+
+        combatManager.startCombat();
+        showCombatStart();
+
+        setCombatActions(combatManager.getActions());
+    }
+
+
+    private void showNPCProfile(){
+        NPCProfile profile = currentNPC.getProfile();
+
+        setStoryText(
+                "Name: " + profile.getName() +
+                "\nTitle: " + profile.getTitle() +
+                "\nRealm: " + profile.getRealm() +
+                "\nPersonality: " + profile.getPersonality() +
+                "\n\n" + profile.getDescription()
+        );
+
+        choice1Button.setVisible(false);
+        choice2Button.setVisible(false);
+        choice3Button.setVisible(false);
+        choice4Button.setVisible(false);
+
+        combatBackButton.setVisible(true);
+        skillsButton.setVisible(false);
+        viewingNPCProfile = true;
     }
 
 

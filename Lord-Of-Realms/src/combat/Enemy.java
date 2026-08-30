@@ -1,19 +1,31 @@
 package combat;
 
+
+import npc.NPC;
+
 public class Enemy {
 
     private String name;
     private int hp;
-   // private int maxHp;
-   // private int attack;
-   // private int expReward;
     private CombatProfile combatProfile;
+
+
 
     public Enemy(String name,CombatProfile combatProfile){
         this.name = name;
         this.hp = combatProfile.getMaxHp();
         this.combatProfile = combatProfile;
+
     }
+
+    public Enemy(NPC npc){
+
+        this.name = npc.getProfile().getName();
+        this.combatProfile = npc.getCombatProfile();
+        this.hp = combatProfile.getMaxHp();
+    }
+
+
 
     public String getName(){
         return name;

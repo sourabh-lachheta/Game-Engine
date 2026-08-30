@@ -8,6 +8,7 @@ import java.util.Map;
 
 import inventory.Item;
 import inventory.ItemDatabase;
+import npc.NPCDatabase;
 import player.Player;
 import combat.CombatProfile;
 import combat.Enemy;
@@ -80,11 +81,9 @@ public class StoryManager {
 
     private void initializeStory(){
         // temp
-        CombatProfile wolfProfile =
-                new CombatProfile(80, 15, 5, 30);
 
-        Enemy wolf =
-                new Enemy("Wolf", wolfProfile);
+
+
 
 
 
@@ -170,18 +169,51 @@ public class StoryManager {
                 "you found wolf"
         );
 
-        scene10.addChoice(new Choice("fight wolf", 12,wolf));
-        scene10.addChoice(new Choice("Go Forward",13));
+        scene10.addChoice(new Choice("go to wolf", 12,NPCDatabase.WOLF));
+        scene10.addChoice(new Choice("Go Forward",12));
         addScene(scene10);
 
         StoryScene scene12 = new StoryScene(
                 12,
-                " another healing item added"
+                " Now you defeated wolf , now you are looking front you can see a small village "
         );
 
-       // scene10.addChoice(new Choice("Take the herb", 12,herb));
+
         scene12.addChoice(new Choice("Go Forward",13));
         addScene(scene12);
+
+        StoryScene scene13 = new StoryScene(
+                13,
+                "you enter small village. "
+        );
+
+        scene13.addChoice(new Choice("go to marchant",14,NPCDatabase.MERCHANT));
+        addScene(scene13);
+
+
+
+        StoryScene scene14 = new StoryScene(
+                14,
+                "you currently in front of marchant "
+        );
+
+        scene14.addChoice(new Choice("talk",1,NPCDatabase.MERCHANT));
+        addScene(scene14);
+
+
+
+
+
+
+
+        StoryScene scene30 = new StoryScene(
+                30,
+                "yoo what you want.. "
+        );
+
+        scene30.addChoice(new Choice("show some goods",14));
+        addScene(scene30);
+
 
 
 

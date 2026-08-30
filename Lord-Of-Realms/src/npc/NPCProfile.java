@@ -1,19 +1,21 @@
 package npc;
 
-public class NPCprofile {
+public class NPCProfile {
 
     private String name;
     private String title;
     private String realm;
     private String personality;
     private String description;
+    private int talkSceneId;
 
-    public NPCprofile(String name, String title, String realm, String personality, String description){
+    public NPCProfile(String name, String title, String realm, String personality, String description, int talkSceneId){
         this.name = name;
         this.title = title;
         this.realm = realm;
         this.personality = personality;
         this.description = description;
+        this.talkSceneId = talkSceneId;
     }
 
     public String getName(){
@@ -34,5 +36,9 @@ public class NPCprofile {
 
     public String getDescription(){
         return description;
+    }
+
+    public int getTalkSceneId(){
+        return talkSceneId;
     }
 }
