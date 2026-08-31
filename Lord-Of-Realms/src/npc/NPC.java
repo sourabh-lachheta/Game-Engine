@@ -7,10 +7,12 @@ public class NPC {
 
     private NPCProfile profile;
     private CombatProfile combatProfile;
+    private boolean canTrade;
 
-    public NPC(NPCProfile profile, CombatProfile combatProfile) {
+    public NPC(NPCProfile profile, CombatProfile combatProfile, boolean canTrade) {
         this.profile = profile;
         this.combatProfile = combatProfile;
+        this.canTrade = canTrade;
     }
 
     public NPCProfile getProfile() {
@@ -23,5 +25,9 @@ public class NPC {
 
     public boolean canFight(){
         return combatProfile != null;
+    }
+
+    public boolean canTrade(){
+        return canTrade;
     }
 }

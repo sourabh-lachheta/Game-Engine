@@ -925,6 +925,10 @@ public class GameWindow extends JFrame {
 
     private void showNPCMenu(){
 
+        viewingNPCProfile = false;
+        skillsButton.setVisible(false);
+        combatBackButton.setVisible(true);
+
         NPC npc = currentNPC;
 
         setStoryText(npc.getProfile().getName() + "\n\nwhat do you want to do?");
@@ -1001,6 +1005,7 @@ public class GameWindow extends JFrame {
         inNPC = false;
 
         combatBackButton.setVisible(false);
+        selectingSkillScroll = false;
 
         storyManager.startStory(talkSceneId);
 

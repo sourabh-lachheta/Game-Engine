@@ -28,7 +28,8 @@ public class NPCDatabase {
 
       WOLF = new NPC(
               wolfProfile,
-              wolfCombatProfile
+              wolfCombatProfile,
+              false
       );
 
 
@@ -45,7 +46,8 @@ public class NPCDatabase {
 
       MERCHANT = new NPC(
               merchantProfile,
-              null
+              null,
+              true
       );
    }
 
