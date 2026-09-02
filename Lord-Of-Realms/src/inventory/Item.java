@@ -11,6 +11,7 @@ public class Item {
     private ItemType type;
     private int attackDamage;
     private Skill skill;
+    private int price;
 
     public Item(String name, boolean stackable){
         // this.name = name;
@@ -25,6 +26,8 @@ public class Item {
         this.healAmount = healAmount;
         this.consumable = consumable;
         this.type = type;
+
+        this.price = 0;
     }
 
     public Item(String name, boolean stackable, int healAmount, boolean consumable, ItemType type, int attackDamage) {
@@ -35,6 +38,8 @@ public class Item {
         this.consumable = consumable;
         this.type = type;
         this.attackDamage = attackDamage;
+
+        this.price = 0;
     }
 
     public Item(String name, Boolean stackable, Skill skill,ItemType type){
@@ -44,6 +49,21 @@ public class Item {
         this.consumable = true;
         this.type = ItemType.SKILL;
         this.skill = skill;
+
+        this.price = 0;
+    }
+
+    public Item(String name, boolean stackable, int healAmount,
+                boolean consumable, ItemType type, int attackDamage,
+                int price) {
+
+        this.name = name;
+        this.stackable = stackable;
+        this.healAmount = healAmount;
+        this.consumable = consumable;
+        this.type = type;
+        this.attackDamage = attackDamage;
+        this.price = price;
     }
 
     public Skill getSkill(){
@@ -93,5 +113,9 @@ public class Item {
 
     public boolean isStackable(){
         return  stackable;
+    }
+
+    public int getPrice(){
+        return price;
     }
 }

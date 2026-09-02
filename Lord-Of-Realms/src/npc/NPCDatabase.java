@@ -1,6 +1,7 @@
 package npc;
 
 import combat.CombatProfile;
+import inventory.ItemDatabase;
 
 public class NPCDatabase {
 
@@ -49,6 +50,9 @@ public class NPCDatabase {
               null,
               true
       );
+
+      MERCHANT.addTradeItem(ItemDatabase.HEALING_HERB,10);
+      MERCHANT.addTradeItem(ItemDatabase.RUSTY_SWORD,1);
    }
 
 

@@ -19,6 +19,7 @@ public class Player {
     private int attack;
     private int defense;
     private List<Skill> learnedSkills;
+    private int gold;
 
     private Inventory inventory;
 
@@ -37,6 +38,8 @@ public class Player {
 
         attack = 10;
         defense = 5;
+
+        gold = 100;
 
         inventory = new Inventory();
         learnedSkills = new ArrayList<>();
@@ -224,8 +227,21 @@ public class Player {
         return qi;
     }
 
+    public int getGold(){
+        return gold;
+    }
 
+    public void addGold(int amount){
+        gold += amount;
+    }
 
+    public boolean spendGold(int amount){
+        if(gold < amount){
+            return false;
+        }
 
+        gold -= amount;
+        return true;
+    }
 
 }

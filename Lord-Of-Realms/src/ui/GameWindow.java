@@ -48,6 +48,7 @@ public class GameWindow extends JFrame {
     private JLabel qiLabel;
     private JLabel expLabel;
     private JLabel defenseLabel;
+    private JLabel goldLabel;
 
 
     //story panel...
@@ -88,6 +89,7 @@ public class GameWindow extends JFrame {
     private boolean inNPC = false;
     private NPC currentNPC;
     private Choice npcChoice;
+    private boolean selectingTradeItem = false;
 
 
 
@@ -158,6 +160,10 @@ public class GameWindow extends JFrame {
             handleSkillScroll(buttonIndex);
         }
 
+        else if(selectingTradeItem){
+            handleNPCTrade(buttonIndex);
+        }
+
         else if(inNPC){
             handleNPCAction(buttonIndex);
 
@@ -210,6 +216,8 @@ public class GameWindow extends JFrame {
         statusPanel.add(expLabel);
         defenseLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(defenseLabel);
+        goldLabel.setFont(new Font("font",Font.PLAIN,16));
+        statusPanel.add(goldLabel);
 
         // inventoryLabel.setFont(new Font("font",Font.PLAIN,16));
         // statusPanel.add(inventoryLabel);
@@ -245,6 +253,7 @@ public class GameWindow extends JFrame {
         qiLabel = new JLabel();
         expLabel = new JLabel();
         defenseLabel = new JLabel();
+        goldLabel = new JLabel();
 
         // inventoryLabel = new JLabel("Inventory : Empty");
 
@@ -411,6 +420,7 @@ public class GameWindow extends JFrame {
         qiLabel.setText("Qi : " + player.getQiText());
         expLabel.setText("EXp : " + player.getExp());
         defenseLabel.setText("Defense : " + player.getDefense());
+        goldLabel.setText("Gold : " + player.getGold());
     }
 
     private void updateInventory(){
@@ -810,6 +820,10 @@ public class GameWindow extends JFrame {
         } else if(choice.getType() == ChoiceType.NPC){
             enterNPC(choice);
             return;
+        } else if(choice.getType() == ChoiceType.NPC_BACK){
+
+            showNPCMenu();
+            return;
         }
 
        boolean success =  storyManager.selectChoice(choiceIndex);
@@ -939,8 +953,17 @@ public class GameWindow extends JFrame {
         choice2Button.setText("Profile");
         choice2Button.setVisible(true);
 
-        choice3Button.setText("Trade");
-        choice4Button.setVisible(true);
+
+
+
+
+        if(npc.canTrade()) {
+            choice3Button.setText("Trade");
+            choice3Button.setVisible(true);
+
+        }else{
+            choice3Button.setVisible(false);
+        }
 
 
         if(npc.canFight()){
@@ -967,12 +990,13 @@ public class GameWindow extends JFrame {
             // Profile
             showNPCProfile();
 
-        } /*else if (actionIndex == 2) {
+        } else if (actionIndex == 2) {
 
             // Trade
-            handleNPCTrade();
+           // handleNPCTrade();
+            showNPCTrade();
 
-        }*/ else if (actionIndex == 3) {
+        } else if (actionIndex == 3) {
 
             // Fight
             if (currentNPC.canFight()) {
@@ -1050,6 +1074,114 @@ public class GameWindow extends JFrame {
         combatBackButton.setVisible(true);
         skillsButton.setVisible(false);
         viewingNPCProfile = true;
+    }
+
+
+    private void showNPCTrade(){
+
+        selectingTradeItem = true;
+        combatBackButton.setVisible(false);
+
+        List<InventoryItem> tradeItems = currentNPC.getTradeItems();
+
+        setStoryText(
+                currentNPC.getProfile().getName() +
+                        "\n\nWhat do you want to buy?"
+        );
+
+
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button
+        };
+
+        for(JButton button : buttons){
+            button.setVisible(false);
+        }
+
+        int buttonIndex = 0;
+
+        for(InventoryItem inventoryItem : tradeItems){
+
+            if(buttonIndex >= buttons.length -1){
+                break;
+            }
+
+            buttons[buttonIndex].setText(
+                    inventoryItem.getItem().getName()
+                    + " x "
+                    + inventoryItem.getQuantity()
+            );
+            buttons[buttonIndex].setVisible(true);
+
+
+            buttonIndex++;
+
+            if(buttonIndex < buttons.length){
+                buttons[buttonIndex].setText("Back");
+                buttons[buttonIndex].setVisible(true);
+            }
+        }
+    }
+
+
+    private boolean buyItem(Item item){
+
+        int price = item.getPrice();
+
+        if(!player.spendGold(price)){
+
+            setStoryText(
+                    "You don't have enough gold.\n\n" +
+                    item.getName() +
+                    " costs " + price +
+                    " Gold.\n" +
+                    " You have " + player.getGold() + " Gold"
+            );
+            return false;
+        }
+
+        if(!currentNPC.buyItem(item)){
+
+            setStoryText("This item is out of stock.");
+
+            player.addGold(price);
+
+            return false;
+        }
+
+
+        player.addItem(item);
+
+        setStoryText(
+                "You Bought " + item.getName() +
+                " for " + price + " Gold."
+        );
+        updatePlayerInfo();
+        updateInventory();
+
+        return true;
+    }
+
+
+    private void handleNPCTrade(int itemIndex){
+
+        List<InventoryItem> tradeItems = currentNPC.getTradeItems();
+
+        if(itemIndex >= tradeItems.size()){
+
+            selectingTradeItem = false;
+            showNPCMenu();
+            return;
+        }
+
+        InventoryItem inventoryItem = tradeItems.get(itemIndex);
+
+        buyItem((inventoryItem.getItem()));
+
+
     }
 
 

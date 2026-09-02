@@ -62,6 +62,13 @@ public class Choice {
     }
 
 
+    public Choice(String text, int nextSceneId, ChoiceType type) {
+        this.text = text;
+        this.nextSceneId = nextSceneId;
+        this.type = type;
+    }
+
+
 
     public NPC getNpc(){
         return npc;
