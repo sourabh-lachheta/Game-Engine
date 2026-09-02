@@ -184,7 +184,7 @@ public class StoryManager {
 
         StoryScene scene13 = new StoryScene(
                 13,
-                "you enter small village. "
+                "you enter small village. and you see the marchant... "
         );
 
         scene13.addChoice(new Choice("go to marchant",14,NPCDatabase.MERCHANT));
@@ -211,8 +211,25 @@ public class StoryManager {
                 "yoo what you want.. "
         );
 
-        scene30.addChoice(new Choice("show some goods",14));
+        scene30.addChoice(new Choice("Tell me about village ",31));
+        scene30.addChoice(new Choice("Tell about recent news" ,32));
+        scene30.addChoice(new Choice("Tell me about location of next village",32));
+        scene30.addChoice(new Choice("back",0,ChoiceType.NPC_BACK));
         addScene(scene30);
+
+
+        StoryScene scene20 = new StoryScene(
+                20,
+                "No talk only fight.... "
+        );
+
+        scene20.addChoice(new Choice("okk i will fight ",31));
+
+        scene20.addChoice(new Choice("back",0,ChoiceType.NPC_BACK));
+        addScene(scene20);
+
+
+
 
 
 

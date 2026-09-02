@@ -939,7 +939,12 @@ public class GameWindow extends JFrame {
 
     private void showNPCMenu(){
 
+        inNPC = true;
+
         viewingNPCProfile = false;
+        selectingTradeItem = false;
+        selectingSkillScroll = false;
+
         skillsButton.setVisible(false);
         combatBackButton.setVisible(true);
 
