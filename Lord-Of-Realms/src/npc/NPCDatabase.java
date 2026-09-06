@@ -51,7 +51,7 @@ public class NPCDatabase {
               true
       );
 
-      MERCHANT.addTradeItem(ItemDatabase.HEALING_HERB,10);
+      MERCHANT.addTradeItem(ItemDatabase.HEALING_HERB,5);
       MERCHANT.addTradeItem(ItemDatabase.RUSTY_SWORD,1);
    }
 

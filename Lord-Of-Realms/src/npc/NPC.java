@@ -58,13 +58,13 @@ public class NPC {
 
             if (inventoryItem.getItem().equals(item)) {
 
-                if (inventoryItem.getQuantity() > 1) {
+                if (inventoryItem.getQuantity() > 0) {
                     inventoryItem.decreaseQuantity();
-                } else {
-                    iterator.remove();
+                    return true;
                 }
 
-                return true;
+
+                return false;
             }
         }
 

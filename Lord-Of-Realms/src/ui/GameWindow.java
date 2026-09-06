@@ -1118,20 +1118,22 @@ public class GameWindow extends JFrame {
                     inventoryItem.getItem().getName()
                     + " x "
                     + inventoryItem.getQuantity()
+                    + " - "
+                    + inventoryItem.getItem().getPrice()
+                    + " gold"
             );
             buttons[buttonIndex].setVisible(true);
 
 
             buttonIndex++;
-
-            if(buttonIndex < buttons.length){
-                buttons[buttonIndex].setText("Back");
-                buttons[buttonIndex].setVisible(true);
-            }
+        }
+        if(buttonIndex < buttons.length){
+            buttons[buttonIndex].setText("Back");
+            buttons[buttonIndex].setVisible(true);
         }
     }
 
-
+    // form gamewindow
     private boolean buyItem(Item item){
 
         int price = item.getPrice();
@@ -1166,6 +1168,7 @@ public class GameWindow extends JFrame {
         );
         updatePlayerInfo();
         updateInventory();
+
 
         return true;
     }
