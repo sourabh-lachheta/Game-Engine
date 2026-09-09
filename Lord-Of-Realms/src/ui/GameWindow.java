@@ -34,6 +34,16 @@ public class GameWindow extends JFrame {
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 700;
 
+    private static final Color BACKGROUND_COLOR = Color.decode("#323437");
+    private static final Color PANEL_COLOR = Color.decode("#2C2E31");
+    private static final Color TEXT_COLOR = Color.decode("#D1D0C5");
+    private static final Color SECONDARY_COLOR = Color.decode("#646669");
+    private static final Color ACCENT_COLOR = Color.decode("#E2B714");
+
+    private JLabel statusTitle;
+    private JLabel inventoryTitle;
+    private JLabel storyTitle;
+
     private JPanel mainPanel;
 
     //Status  panel...
@@ -112,6 +122,7 @@ public class GameWindow extends JFrame {
         configureWindow();
         createComponents();
         layoutComponents();
+        applyTheme();
         registerListeners();
     }
 
@@ -183,9 +194,10 @@ public class GameWindow extends JFrame {
         //  mainPanel.add(statusPanel, BorderLayout.NORTH);
 
 
-        topPanel.setLayout(new BorderLayout());
-        topPanel.add(statusPanel, BorderLayout.WEST);
-        topPanel.add(inventoryPanel,BorderLayout.CENTER);
+        topPanel.setLayout(new GridLayout(1,2));
+        topPanel.add(statusPanel);
+        topPanel.add(inventoryPanel);
+        topPanel.setPreferredSize(new Dimension(1200, 180));
 
         mainPanel.add(topPanel,BorderLayout.NORTH);
         mainPanel.add(storyPanel, BorderLayout.CENTER);
@@ -195,9 +207,9 @@ public class GameWindow extends JFrame {
 
 
 
-        statusPanel.setBackground(Color.RED);
-        storyPanel.setBackground(Color.BLUE);
-        choicePanel.setBackground(Color.GREEN);
+       // statusPanel.setBackground(Color.RED);
+       // storyPanel.setBackground(Color.BLUE);
+       // choicePanel.setBackground(Color.GREEN);
 
         // status panel...
 
@@ -207,20 +219,23 @@ public class GameWindow extends JFrame {
         statusPanel.setLayout(
                 new BoxLayout(statusPanel,BoxLayout.Y_AXIS)
         );
-        nameLabel.setFont(new Font("font",Font.PLAIN,16));
+
         statusPanel.add(nameLabel);
-        realmLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(realmLabel);
-        hpLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(hpLabel);
-        qiLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(qiLabel);
-        expLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(expLabel);
-        defenseLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(defenseLabel);
-        goldLabel.setFont(new Font("font",Font.PLAIN,16));
         statusPanel.add(goldLabel);
+
+        Font statusFont = new Font("SansSerif", Font.PLAIN,16);
+        nameLabel.setFont(statusFont);
+        realmLabel.setFont(statusFont);
+        hpLabel.setFont(statusFont);
+        qiLabel.setFont(statusFont);
+        expLabel.setFont(statusFont);
+        defenseLabel.setFont(statusFont);
+        goldLabel.setFont(statusFont);
 
         // inventoryLabel.setFont(new Font("font",Font.PLAIN,16));
         // statusPanel.add(inventoryLabel);
@@ -241,6 +256,107 @@ public class GameWindow extends JFrame {
 
 
 
+
+
+
+        choicePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+
+
+
+    }
+
+    private void applyTheme() {
+
+
+      statusPanel.setBorder(
+              BorderFactory.createTitledBorder(
+                      BorderFactory.createCompoundBorder(
+                              BorderFactory.createLineBorder(SECONDARY_COLOR),
+                              BorderFactory.createEmptyBorder(10,10,10,10)
+                      ),
+                      "STATUS",
+                      0,
+                      0,
+                      null,
+                      ACCENT_COLOR
+              )
+      );
+
+        inventoryPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(SECONDARY_COLOR),
+                                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                        ),
+                        "INVENTORY",
+                        0,
+                        0,
+                        null,
+                        ACCENT_COLOR
+                )
+        );
+
+        storyPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(SECONDARY_COLOR),
+                        "STORY",
+                        0,
+                        0,
+                        null,
+                        ACCENT_COLOR
+                )
+        );
+
+        // Main background
+        mainPanel.setBackground(BACKGROUND_COLOR);
+        topPanel.setBackground(BACKGROUND_COLOR);
+        storyPanel.setBackground(BACKGROUND_COLOR);
+        choicePanel.setBackground(BACKGROUND_COLOR);
+
+        // Status and inventory
+        statusPanel.setBackground(PANEL_COLOR);
+        inventoryPanel.setBackground(PANEL_COLOR);
+
+        // Text areas
+        inventoryTextArea.setBackground(PANEL_COLOR);
+        inventoryTextArea.setForeground(TEXT_COLOR);
+
+        storyTextArea.setBackground(BACKGROUND_COLOR);
+        storyTextArea.setForeground(TEXT_COLOR);
+
+        // Labels
+        nameLabel.setForeground(TEXT_COLOR);
+        realmLabel.setForeground(TEXT_COLOR);
+        hpLabel.setForeground(TEXT_COLOR);
+        qiLabel.setForeground(TEXT_COLOR);
+        expLabel.setForeground(TEXT_COLOR);
+        defenseLabel.setForeground(TEXT_COLOR);
+        goldLabel.setForeground(TEXT_COLOR);
+
+        statusTitle.setForeground(ACCENT_COLOR);
+        inventoryTitle.setForeground(ACCENT_COLOR);
+        storyTitle.setForeground(ACCENT_COLOR);
+
+        // Buttons
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button,
+                combatBackButton,
+                combatContinueButton,
+                skillsButton,
+                breakthroughButton
+        };
+
+        for (JButton button : buttons) {
+            button.setBackground(PANEL_COLOR);
+            button.setForeground(TEXT_COLOR);
+            button.setFocusPainted(false);
+            button.setOpaque(true);
+        }
+
     }
 
 
@@ -259,7 +375,9 @@ public class GameWindow extends JFrame {
         defenseLabel = new JLabel();
         goldLabel = new JLabel();
 
-        // inventoryLabel = new JLabel("Inventory : Empty");
+        statusTitle = new JLabel("STATUS");
+        inventoryTitle = new JLabel("INVENTORY");
+        storyTitle = new JLabel("STORY");
 
         topPanel = new JPanel();
         inventoryPanel = new JPanel();
@@ -274,7 +392,9 @@ public class GameWindow extends JFrame {
         //story panel....
         storyPanel = new JPanel();
         storyTextArea = new JTextArea();
-        storyTextArea.setFont(new Font("GC Omega", Font.BOLD,20));
+       // storyTextArea.setFont(new Font("GC Omega", Font.BOLD,20));
+        inventoryTextArea.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        storyTextArea.setFont(new Font("SansSerif", Font.PLAIN, 18));
 
 
         storyScrollPane = new JScrollPane(storyTextArea);
@@ -301,6 +421,9 @@ public class GameWindow extends JFrame {
 
         combatItems = new ArrayList<>();
         combatWeapons = new ArrayList<>();
+
+
+
 
 
 
@@ -419,9 +542,7 @@ public class GameWindow extends JFrame {
 
     }
 
-    public void updateHealth(int hp){
-        hpLabel.setText("HP : " + hp + "/100");
-    }
+
 
     private void updatePlayerInfo(){
         nameLabel.setText(("Name : " + player.getName()));
@@ -436,7 +557,6 @@ public class GameWindow extends JFrame {
     private void updateInventory(){
 
         inventoryTextArea.setText(
-                "Inventory: \n" +
                         player.getInventory().getItemsText()
         );
     }
