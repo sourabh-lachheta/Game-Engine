@@ -136,9 +136,9 @@ public class MortalRealmStory {
                 "yoo what you want.. "
         );
 
-        scene30.addChoice(new Choice("Tell me about village ",31));
+        scene30.addChoice(new Choice("Tell me about village",31));
         scene30.addChoice(new Choice("Tell about recent news" ,32));
-        scene30.addChoice(new Choice("Tell me about location of next village",32));
+        scene30.addChoice(new Choice("Tell me about location of next village ",32));
         scene30.addChoice(new Choice("back",0,ChoiceType.NPC_BACK));
         storyManager.addScene(scene30);
 

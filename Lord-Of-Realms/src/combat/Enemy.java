@@ -58,4 +58,8 @@ public class Enemy {
     public int getExpReward(){
         return combatProfile.getExpReward();
     }
+
+    public int getDefense(){
+        return combatProfile.getDefense();
+    }
 }

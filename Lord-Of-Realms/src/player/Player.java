@@ -15,7 +15,9 @@ public class Player {
     private int qi;
     private int maxQi;
     private int exp;
+    private int maxExp;
     private int realm;
+    private int stage;
     private int attack;
     private int defense;
     private List<Skill> learnedSkills;
@@ -34,7 +36,10 @@ public class Player {
         qi = maxQi;
 
         exp = 0;
+        maxExp = 50;
+
         realm = 1;
+        stage = 1;
 
         attack = 10;
         defense = 5;
@@ -61,16 +66,22 @@ public class Player {
     public int getExp(){
         return exp;
     }
+
+    public String getExpText(){
+        return exp + "/" + maxExp;
+    }
+
+
     public String getRealmName(){
         switch (realm){
             case 1:
-                return "Body Tempering";
+                return "Body Tempering " + stage + "          ";
 
             case 2:
-                return "Qi Gathering";
+                return "Qi Gathering " + stage + " ";
 
             case 3:
-                return "Foundation Establishment";
+                return "Foundation Establishment " + stage + " ";
 
             default:
                 return "Unknown Realm";
@@ -115,8 +126,12 @@ public class Player {
         }
 
     }
-    public void gainQi(){
+    public void gainQi(int amount){
+        qi += amount;
 
+        if(qi > maxQi){
+            qi = maxQi;
+        }
     }
 
 
@@ -127,12 +142,14 @@ public class Player {
 
     public void gainExp(int amount){
         exp += amount;
+
+        if(exp > maxExp){
+            exp = maxExp;
+        }
     }
 
 
-    public void breakthrough(){
 
-    }
 
     public Inventory getInventory(){
         return inventory;
@@ -241,6 +258,65 @@ public class Player {
         }
 
         gold -= amount;
+        return true;
+    }
+
+    public boolean canBreakthrough(){
+        return exp >= maxExp && qi >= maxQi;
+    }
+
+    public boolean breakthrough(){
+
+        if(!canBreakthrough()){
+            return false;
+        }
+
+        // Save the old Qi requirement
+        int oldMaxQi = maxQi;
+
+        // EXP is completely consumed
+        exp = 0;
+
+        if(stage < 9){
+
+            // Keep half of the Qi used for this breakthrough
+            qi = oldMaxQi / 2;
+
+            stage++;
+
+            // Requirements for the new stage
+            maxExp = 50 + (stage - 1) * 50;
+            maxQi = 20 + (stage - 1) * 10;
+
+            // Increase stats
+            maxHp += 10;
+            hp += 10;
+
+            attack += 2;
+            defense += 1;
+
+        } else {
+
+            // Major realm breakthrough
+            realm++;
+            stage = 1;
+
+            // New realm starts with new requirements
+            maxExp = 50;
+            maxQi = 20;
+
+            // Major stat increase
+            maxHp += 50;
+
+
+            attack += 10;
+            defense += 5;
+
+            // Fully recover after entering a new realm
+            hp = maxHp;
+            qi = maxQi;
+        }
+
         return true;
     }
 

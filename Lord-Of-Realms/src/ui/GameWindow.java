@@ -66,6 +66,7 @@ public class GameWindow extends JFrame {
     private JButton combatBackButton;
     private JButton combatContinueButton;
     private JButton skillsButton;
+    private JButton breakthroughButton;
 
 
 
@@ -141,6 +142,8 @@ public class GameWindow extends JFrame {
           combatContinueButton.addActionListener(e -> handleCombatContinue());
 
           skillsButton.addActionListener(e -> showSkillScrolls());
+
+          breakthroughButton.addActionListener(e -> handleBreakthrough());
 
       }
 
@@ -234,6 +237,7 @@ public class GameWindow extends JFrame {
         choicePanel.add(combatBackButton);
         choicePanel.add(combatContinueButton);
         choicePanel.add(skillsButton);
+        choicePanel.add(breakthroughButton);
 
 
 
@@ -290,6 +294,9 @@ public class GameWindow extends JFrame {
         combatContinueButton.setVisible(false);
         skillsButton = new JButton("Skills");
         skillsButton.setVisible(true);
+        breakthroughButton = new JButton("Breakthrough");
+        breakthroughButton.setVisible(false);
+
 
 
         combatItems = new ArrayList<>();
@@ -324,7 +331,10 @@ public class GameWindow extends JFrame {
 
         };
 
+        updateBreakthroughButton();
+
         for(int i = 0; i < buttons.length; i++){
+
             if(i < choices.size()){
                 buttons[i].setText(choices.get(i).getText());
                 buttons[i].setVisible(true);
@@ -418,7 +428,7 @@ public class GameWindow extends JFrame {
         realmLabel.setText("Realm : "+ player.getRealmName());
         hpLabel.setText("HP : "+ player.getHealthText());
         qiLabel.setText("Qi : " + player.getQiText());
-        expLabel.setText("EXp : " + player.getExp());
+        expLabel.setText("EXp : " + player.getExpText());
         defenseLabel.setText("Defense : " + player.getDefense());
         goldLabel.setText("Gold : " + player.getGold());
     }
@@ -429,6 +439,25 @@ public class GameWindow extends JFrame {
                 "Inventory: \n" +
                         player.getInventory().getItemsText()
         );
+    }
+
+
+    private void handleBreakthrough(){
+
+        if(player.breakthrough()){
+
+            setStoryText("You successfully broke through!");
+
+            updatePlayerInfo();
+            updateInventory();
+        }
+
+        breakthroughButton.setVisible(false);
+
+    }
+
+    private void updateBreakthroughButton(){
+        breakthroughButton.setVisible(player.canBreakthrough());
     }
 
     private void handleSkillScroll(int buttonIndex){

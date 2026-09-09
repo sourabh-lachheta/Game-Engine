@@ -42,11 +42,13 @@ public class CombatManager {
         String result =
                 player.getName() + " attacks " + enemy.getName() + "\n" +
                         "Damage: " + damage + "\n\n" +
+                        enemy.getName() + " Defense: " + enemy.getDefense() + "\n" +
                         enemy.getName() + " HP: " +
                         enemy.getHp() + "/" + enemy.getMaxHp();
 
         if(!enemy.isAlive()){
             player.gainExp(enemy.getExpReward());
+
 
             result += "\n\n" +
                     enemy.getName() + " has been defeated!\n" +
@@ -60,13 +62,14 @@ public class CombatManager {
 
     public String playerAttack(Item weapon){
 
-        int damage = player.getCombatAttack() + weapon.getAttackDamage();
+        int damage = player.getCombatAttack() + weapon.getAttackDamage() - enemy.getDefense();
 
         enemy.takeDamage(damage);
 
         String result =
                 player.getName() + " attacks " + enemy.getName() + "\n" +
                         "Damage: " + damage + "\n\n" +
+                        enemy.getName() + " Defense: " + enemy.getDefense() + "\n" +
                         enemy.getName() + " HP: " +
                         enemy.getHp() + "/" + enemy.getMaxHp();
 
@@ -95,6 +98,7 @@ public class CombatManager {
                 enemy.getName() + " attacks " +
                         player.getName() + "\n" +
                         "Damage: " + damage + "\n\n" +
+                        player.getName() + " Defense: " + player.getDefense() + "\n" +
                         player.getName() + " HP: " +
                         player.getHealthText();
 

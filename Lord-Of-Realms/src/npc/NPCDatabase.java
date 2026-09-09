@@ -24,7 +24,7 @@ public class NPCDatabase {
                       100,   // maxHp
                       15,    // attack
                       5,     // defense
-                      50     // expReward
+                      120     // expReward
               );
 
       WOLF = new NPC(
