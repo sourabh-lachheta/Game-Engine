@@ -26,6 +26,8 @@ import story.StoryScene;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -245,6 +247,7 @@ public class GameWindow extends JFrame {
         storyPanel.add(storyScrollPane,BorderLayout.CENTER);
 
         // choice panel....
+        choicePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 8));
         choicePanel.add(choice1Button);
         choicePanel.add(choice2Button);
         choicePanel.add(choice3Button);
@@ -355,8 +358,46 @@ public class GameWindow extends JFrame {
             button.setForeground(TEXT_COLOR);
             button.setFocusPainted(false);
             button.setOpaque(true);
+            addHoverEffect(button);
+
+          /*  button.setBorder(
+                    BorderFactory.createLineBorder(SECONDARY_COLOR, 3)
+            );*/
+
+
+          //  button.setBackground(new Color(210, 210, 210));
+          //  button.setForeground(new Color(35,35,35));
+           // button.setFont(new Font("SansSerif", Font.BOLD, 16));
         }
 
+
+
+    }
+
+
+    private void addHoverEffect(JButton button){
+        button.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e){
+                button.setBackground(new Color(60, 60, 60));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e){
+                button.setBackground(PANEL_COLOR);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setBackground(new Color(45, 45, 45));
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setBackground(new Color(60, 60, 60));
+            }
+        });
     }
 
 
@@ -392,17 +433,19 @@ public class GameWindow extends JFrame {
         //story panel....
         storyPanel = new JPanel();
         storyTextArea = new JTextArea();
-       // storyTextArea.setFont(new Font("GC Omega", Font.BOLD,20));
         inventoryTextArea.setFont(new Font("SansSerif", Font.PLAIN, 16));
         storyTextArea.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        storyTextArea.setMargin(new Insets(15,15,15,15));
 
 
         storyScrollPane = new JScrollPane(storyTextArea);
+        storyScrollPane.setBorder(null);
         storyTextArea.setEditable(false);
         storyTextArea.setLineWrap(true);
         storyTextArea.setWrapStyleWord(true);
 
         //choice panel...
+
         choicePanel = new JPanel();
         choice1Button = new JButton();
         choice2Button = new JButton();
@@ -416,6 +459,28 @@ public class GameWindow extends JFrame {
         skillsButton.setVisible(true);
         breakthroughButton = new JButton("Breakthrough");
         breakthroughButton.setVisible(false);
+
+
+        Insets buttonMargin = new Insets(2, 15, 2, 15);
+
+        choice1Button.setMargin(buttonMargin);
+        choice2Button.setMargin(buttonMargin);
+        choice3Button.setMargin(buttonMargin);
+        choice4Button.setMargin(buttonMargin);
+
+
+
+        choice1Button.setFocusPainted(false);
+        choice2Button.setFocusPainted(false);
+        choice3Button.setFocusPainted(false);
+        choice4Button.setFocusPainted(false);
+
+        Font choiceFont = new Font("SansSerif", Font.PLAIN, 15);
+
+        choice1Button.setFont(choiceFont);
+        choice2Button.setFont(choiceFont);
+        choice3Button.setFont(choiceFont);
+        choice4Button.setFont(choiceFont);
 
 
 
