@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Timer;
 
 public class GameWindow extends JFrame {
     private static final String GAME_TITTLE = "LORD OF REALMS";
@@ -45,6 +46,8 @@ public class GameWindow extends JFrame {
     private JLabel statusTitle;
     private JLabel inventoryTitle;
     private JLabel storyTitle;
+    private Timer storyTimer;
+
 
     private JPanel mainPanel;
 
@@ -79,6 +82,7 @@ public class GameWindow extends JFrame {
     private JButton combatContinueButton;
     private JButton skillsButton;
     private JButton breakthroughButton;
+    private int currentChoiceCount;
 
 
 
@@ -223,12 +227,25 @@ public class GameWindow extends JFrame {
         );
 
         statusPanel.add(nameLabel);
+        statusPanel.add(Box.createVerticalStrut(2));
+
         statusPanel.add(realmLabel);
+        statusPanel.add(Box.createVerticalStrut(2));
+
         statusPanel.add(hpLabel);
+        statusPanel.add(Box.createVerticalStrut(2));
+
         statusPanel.add(qiLabel);
+        statusPanel.add(Box.createVerticalStrut(2));
+
         statusPanel.add(expLabel);
+        statusPanel.add(Box.createVerticalStrut(2));
+
         statusPanel.add(defenseLabel);
+        statusPanel.add(Box.createVerticalStrut(2));
+
         statusPanel.add(goldLabel);
+
 
         Font statusFont = new Font("SansSerif", Font.PLAIN,16);
         nameLabel.setFont(statusFont);
@@ -427,8 +444,10 @@ public class GameWindow extends JFrame {
         inventoryTextArea.setEditable(false);
         inventoryTextArea.setLineWrap(true);
         inventoryTextArea.setWrapStyleWord(true);
+        inventoryTextArea.setMargin(new Insets(10, 15, 10, 15));
 
         inventoryScrollPane = new JScrollPane(inventoryTextArea);
+        inventoryScrollPane.setBorder(null);
 
         //story panel....
         storyPanel = new JPanel();
@@ -456,7 +475,7 @@ public class GameWindow extends JFrame {
         combatContinueButton = new JButton("Continue");
         combatContinueButton.setVisible(false);
         skillsButton = new JButton("Skills");
-        skillsButton.setVisible(true);
+        skillsButton.setVisible(false);
         breakthroughButton = new JButton("Breakthrough");
         breakthroughButton.setVisible(false);
 
@@ -507,7 +526,9 @@ public class GameWindow extends JFrame {
 
     public void setStoryText(String text){
 
-        storyTextArea.setText(text);
+       typeStory(text,null);
+
+       // storyTextArea.setText(text);
     }
 
     public void setChoices(List<Choice> choices){
@@ -521,11 +542,13 @@ public class GameWindow extends JFrame {
 
         updateBreakthroughButton();
 
+        currentChoiceCount = choices.size();
+
         for(int i = 0; i < buttons.length; i++){
 
             if(i < choices.size()){
                 buttons[i].setText(choices.get(i).getText());
-                buttons[i].setVisible(true);
+                buttons[i].setVisible(false);
             }else{
                 buttons[i].setVisible(false);
             }
@@ -600,10 +623,19 @@ public class GameWindow extends JFrame {
 
         StoryScene scene = storyManager.getCurrentScene();
 
+        skillsButton.setVisible(false);
 
-
-        setStoryText(scene.getStoryText());
         setChoices(scene.getChoices());
+
+        typeStory(scene.getStoryText(), () ->{
+            showStoryChoices();
+            skillsButton.setVisible(true);
+        });
+        //setStoryText(scene.getStoryText());
+
+       // showStoryChoices();
+       // skillsButton.setVisible(true);
+
 
     }
 
@@ -709,7 +741,7 @@ public class GameWindow extends JFrame {
             storyManager.completeCombat(nextSceneId);
         }
 
-        skillsButton.setVisible(true);
+      //  skillsButton.setVisible(true);
 
         updateScene();
         updatePlayerInfo();
@@ -1054,6 +1086,10 @@ public class GameWindow extends JFrame {
 
         inCombat = true;
 
+
+
+        skillsButton.setVisible(false);
+
         selectingSkillScroll = false;
         selectingCombatSkill = false;
 
@@ -1144,6 +1180,7 @@ public class GameWindow extends JFrame {
     private void enterNPC(Choice choice){
 
         inNPC = true;
+        skillsButton.setVisible(false);
 
         npcChoice = choice;
 
@@ -1260,6 +1297,7 @@ public class GameWindow extends JFrame {
 
         inNPC = false;
         inCombat = true;
+        skillsButton.setVisible(false);
 
         combatChoice = npcChoice;
 
@@ -1404,6 +1442,60 @@ public class GameWindow extends JFrame {
         buyItem((inventoryItem.getItem()));
 
 
+    }
+
+
+
+    private void typeStory(String text, Runnable onFinished){
+
+
+        if(storyTimer != null && storyTimer.isRunning()){
+            storyTimer.stop();
+        }
+
+        storyTextArea.setText("");
+
+        final int[] index = {0};
+
+        storyTimer = new Timer (20,e ->{
+
+            if(index[0] < text.length()){
+
+                storyTextArea.append(
+                        String.valueOf(text.charAt(index[0]))
+                );
+
+                index[0]++;
+            } else {
+                storyTimer.stop();
+
+                if(onFinished != null){
+                    onFinished.run();
+                }
+            }
+
+        });
+        storyTimer.start();
+    }
+
+
+    private void showStoryChoices() {
+
+        JButton[] buttons = {
+                choice1Button,
+                choice2Button,
+                choice3Button,
+                choice4Button
+        };
+
+        for (int i = 0; i < currentChoiceCount; i++) {
+            buttons[i].setVisible(true);
+        }
+
+
+
+        choicePanel.revalidate();
+        choicePanel.repaint();
     }
 
 
